@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Syed Mohammed Zain — Network &amp; Security</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --bg: #0A0F1A;
+    --panel: #101828;
+    --panel-line: #1F2B40;
+    --ink: #E7ECF5;
+    --ink-dim: #8D9AB3;
+    --ink-faint: #5A6685;
+    --amber: #F2B84B;
+    --cyan: #4FD1C5;
+    --red: #E8604C;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]){
+      --bg: #F3F4F7;
+      --panel: #FFFFFF;
+      --panel-line: #DDE2EB;
+      --ink: #131A29;
+      --ink-dim: #545F76;
+      --ink-faint: #8891A5;
+      --amber: #B4770B;
+      --cyan: #0E7C72;
+      --red: #C2402C;
+    }
+  }
+  :root[data-theme="light"]{
+    --bg: #F3F4F7;
+    --panel: #FFFFFF;
+    --panel-line: #DDE2EB;
+    --ink: #131A29;
+    --ink-dim: #545F76;
+    --ink-faint: #8891A5;
+    --amber: #B4770B;
+    --cyan: #0E7C72;
+    --red: #C2402C;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a{ color: var(--cyan); text-decoration: none; }
+  a:hover{ text-decoration: underline; }
+  a:focus-visible, button:focus-visible{ outline: 2px solid var(--amber); outline-offset: 3px; }
+
+  .wrap{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 28px;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 56px;
+  }
+  @media (max-width: 900px){
+    .wrap{ grid-template-columns: 1fr; padding: 0 20px; }
+  }
+
+  /* ---------- Sidebar ---------- */
+  aside{
+    position: sticky;
+    top: 0;
+    align-self: start;
+    padding: 40px 0;
+    height: fit-content;
+  }
+  @media (max-width: 900px){
+    aside{ position: static; padding: 28px 0 0; }
+  }
+
+  .id-block{
+    border: 1px solid var(--panel-line);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 20px;
+  }
+  .id-block .name{
+    font-family: var(--mono);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .id-block .role{
+    margin-top: 6px;
+    color: var(--ink-dim);
+    font-size: 0.92rem;
+  }
+  .id-block .role .cursor{
+    display: inline-block;
+    width: 7px;
+    height: 1em;
+    background: var(--amber);
+    vertical-align: text-bottom;
+    margin-left: 2px;
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink{ 50%{ opacity: 0; } }
+
+  .id-meta{
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--panel-line);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--ink-dim);
+    display: grid;
+    gap: 6px;
+  }
+  .id-meta span{ color: var(--ink-faint); }
+
+  nav.toc{
+    margin-top: 22px;
+    font-family: var(--mono);
+    font-size: 0.86rem;
+  }
+  nav.toc a{
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    padding: 6px 4px;
+    color: var(--ink-dim);
+    border-radius: 3px;
+  }
+  nav.toc a:hover{
+    color: var(--ink);
+    background: var(--panel);
+    text-decoration: none;
+  }
+  nav.toc a .num{ color: var(--ink-faint); }
+
+  .sidebar-foot{
+    margin-top: 22px;
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+  }
+
+  /* ---------- Main ---------- */
+  main{ padding: 40px 0 90px; }
+
+  .terminal{
+    border: 1px solid var(--panel-line);
+    background: var(--panel);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 54px;
+  }
+  .terminal-bar{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--panel-line);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+  }
+  .terminal-bar .dot{ width: 9px; height: 9px; border-radius: 50%; background: var(--panel-line); }
+  .terminal-body{
+    padding: 26px 24px 30px;
+    font-family: var(--mono);
+    font-size: 0.95rem;
+  }
+  .terminal-body .line{ color: var(--ink-dim); }
+  .terminal-body .line .prompt{ color: var(--cyan); }
+  .terminal-body .path{ color: var(--amber); }
+  .terminal-body h1{
+    margin: 14px 0 6px;
+    font-size: clamp(1.6rem, 3.4vw, 2.35rem);
+    font-family: var(--sans);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .terminal-body .tagline{
+    font-family: var(--sans);
+    font-size: 1.02rem;
+    color: var(--ink-dim);
+    max-width: 62ch;
+    margin: 0 0 18px;
+  }
+  .status-row{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .status-chip{
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    border: 1px solid var(--panel-line);
+    color: var(--ink-dim);
+    padding: 5px 10px;
+    border-radius: 3px;
+  }
+  .status-chip.live{ color: var(--amber); border-color: color-mix(in srgb, var(--amber) 40%, var(--panel-line)); }
+
+  section{ margin-bottom: 58px; scroll-margin-top: 24px; }
+  section h2{
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--ink-faint);
+    margin: 0 0 22px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  section h2 .idx{ color: var(--amber); }
+  section h2::after{
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--panel-line);
+  }
+
+  p{ color: var(--ink-dim); max-width: 70ch; }
+
+  /* Timeline */
+  .timeline{ position: relative; padding-left: 26px; }
+  .timeline::before{
+    content: "";
+    position: absolute;
+    left: 5px; top: 6px; bottom: 6px;
+    width: 1px;
+    background: var(--panel-line);
+  }
+  .entry{ position: relative; padding-bottom: 30px; }
+  .entry:last-child{ padding-bottom: 0; }
+  .entry::before{
+    content: "";
+    position: absolute;
+    left: -26px; top: 6px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--ink-faint);
+  }
+  .entry.current::before{ border-color: var(--amber); background: var(--amber); }
+  .entry .when{
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .entry h3{
+    margin: 0 0 3px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .entry .org{
+    font-size: 0.88rem;
+    color: var(--cyan);
+    margin: 0 0 8px;
+  }
+  .entry p{ margin: 0; font-size: 0.92rem; }
+
+  /* Projects */
+  .projects{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 700px){ .projects{ grid-template-columns: 1fr; } }
+  .card{
+    border: 1px solid var(--panel-line);
+    background: var(--panel);
+    border-radius: 6px;
+    padding: 22px;
+  }
+  .card .tag{
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    display: block;
+    margin-bottom: 10px;
+  }
+  .card h3{ margin: 0 0 10px; font-size: 1.05rem; }
+  .card ul{ margin: 0; padding-left: 18px; color: var(--ink-dim); font-size: 0.9rem; }
+  .card li{ margin-bottom: 6px; }
+  .card li:last-child{ margin-bottom: 0; }
+
+  /* Skills — scan block */
+  .scan{
+    border: 1px solid var(--panel-line);
+    background: var(--panel);
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 0.86rem;
+    overflow-x: auto;
+  }
+  .scan-row{
+    display: grid;
+    grid-template-columns: 190px 1fr;
+    gap: 4px;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--panel-line);
+    min-width: 480px;
+  }
+  .scan-row:last-child{ border-bottom: none; }
+  .scan-row .cat{ color: var(--amber); }
+  .scan-row .items{ color: var(--ink-dim); }
+  .scan-row .items span{ color: var(--ink); }
+  .scan-row .items span::after{ content: ","; color: var(--ink-faint); }
+  .scan-row .items span:last-child::after{ content: ""; }
+
+  /* Education table */
+  table.edu{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+  table.edu th{
+    text-align: left;
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 0.74rem;
+    color: var(--ink-faint);
+    padding: 0 14px 10px 0;
+    border-bottom: 1px solid var(--panel-line);
+  }
+  table.edu td{
+    padding: 14px 14px 14px 0;
+    border-bottom: 1px solid var(--panel-line);
+    color: var(--ink-dim);
+    vertical-align: top;
+  }
+  table.edu td.qual{ color: var(--ink); font-weight: 600; }
+  table.edu tr:last-child td{ border-bottom: none; }
+
+  /* Achievements */
+  .ach-list{ list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+  .ach-list li{
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 12px;
+    color: var(--ink-dim);
+    font-size: 0.94rem;
+  }
+  .ach-list li::before{
+    content: "▹";
+    color: var(--cyan);
+  }
+  .ach-list strong{ color: var(--ink); font-weight: 600; }
+
+  /* Footer / contact */
+  footer{
+    border-top: 1px solid var(--panel-line);
+    padding-top: 28px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--ink-faint);
+  }
+  footer a{ color: var(--ink-dim); }
+
+  .langs{ display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .langs span{
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--ink-dim);
+    border: 1px solid var(--panel-line);
+    padding: 4px 10px;
+    border-radius: 3px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <aside>
+    <div class="id-block">
+      <div class="name">Syed Mohammed Zain</div>
+      <div class="role">Network &amp; Security Analyst<span class="cursor"></span></div>
+      <div class="id-meta">
+        <div><span>location</span> — Hyderabad, India</div>
+        <div><span>mobile</span> — +91 81061 43069</div>
+        <div><span>email</span> — <a href="mailto:zain03.md@gmail.com">zain03.md@gmail.com</a></div>
+      </div>
+    </div>
+
+    <nav class="toc">
+      <a href="#profile"><span class="num">01</span> whoami</a>
+      <a href="#experience"><span class="num">02</span> experience</a>
+      <a href="#projects"><span class="num">03</span> projects</a>
+      <a href="#skills"><span class="num">04</span> skills</a>
+      <a href="#education"><span class="num">05</span> education</a>
+      <a href="#achievements"><span class="num">06</span> achievements</a>
+      <a href="#contact"><span class="num">07</span> contact</a>
+    </nav>
+
+    <div class="sidebar-foot">B.E. Information Technology<br>Osmania University, 2025</div>
+  </aside>
+
+  <main>
+
+    <div class="terminal" id="profile">
+      <div class="terminal-bar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span style="margin-left:6px;">zain@hyderabad — zsh</span>
+      </div>
+      <div class="terminal-body">
+        <div class="line"><span class="prompt">syed@hyderabad</span>:<span class="path">~</span>$ whoami</div>
+        <h1>Aspiring SOC / cybersecurity analyst, trained on real network tooling.</h1>
+        <p class="tagline">
+          IT graduate currently working hands-on with vulnerability scanning, Linux administration
+          and network troubleshooting — using Nmap, Wireshark and Burp Suite day to day, with
+          Kali Linux and CCNA-level networking as the base underneath it.
+        </p>
+        <div class="status-row">
+          <span class="status-chip live">● currently: Trainee Engineer, Thanvisree IT Solutions</span>
+          <span class="status-chip">training: CCNA · MCSE · Palo Alto</span>
+          <span class="status-chip">NIELIT (MeitY) cybersecurity intern</span>
+        </div>
+      </div>
+    </div>
+
+    <section id="experience">
+      <h2><span class="idx">02</span> experience</h2>
+      <div class="timeline">
+
+        <div class="entry current">
+          <span class="when">Jun 2026 — Present</span>
+          <h3>Trainee Engineer</h3>
+          <p class="org">Thanvisree IT Solutions Pvt. Ltd</p>
+          <p>Hands-on work in cybersecurity and network security: VAPT, vulnerability scanning
+             and security analysis on Linux systems, plus networking and troubleshooting with
+             Nmap, Wireshark and Burp Suite, with exposure to Kali Linux.</p>
+        </div>
+
+        <div class="entry current">
+          <span class="when">Feb 2026 — Present</span>
+          <h3>Network with Cybersecurity Training</h3>
+          <p class="org">Netrichh IT Solutions</p>
+          <p>Structured training across CCNA, MCSE and Palo Alto, with cybersecurity training
+             ongoing — covering networking, system administration and security concepts.</p>
+        </div>
+
+        <div class="entry">
+          <span class="when">Dec 2025 — Jan 2026</span>
+          <h3>Cybersecurity Online Internship</h3>
+          <p class="org">NIELIT — an autonomous society under MeitY, Government of India</p>
+          <p>Network security, ethical hacking basics, malware awareness, cyber threats,
+             security tools and best practices, plus real-world cyber risk analysis.</p>
+        </div>
+
+        <div class="entry">
+          <span class="when">Nov — Dec 2024</span>
+          <h3>Data Science Internship</h3>
+          <p class="org">SkillDzire, Hyderabad</p>
+          <p>Data collection, cleaning and exploratory analysis; basic ML algorithms applied
+             to structured, real-world datasets to build simple predictive models.</p>
+        </div>
+
+        <div class="entry">
+          <span class="when">May — Sep 2024</span>
+          <h3>TalentNext — Java Full Stack</h3>
+          <p class="org">Wipro</p>
+          <p>Core and Advanced Java, Spring Boot and full-stack development — backend logic,
+             database integration and object-oriented design, applied to working web apps.</p>
+        </div>
+
+        <div class="entry">
+          <span class="when">Aug — Sep 2023</span>
+          <h3>Startup Internship — Artificial Intelligence</h3>
+          <p class="org">SkillDzire, with the Andhra Pradesh Council of Higher Education</p>
+          <p>Two-week internship focused on applied data science fundamentals.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="projects">
+      <h2><span class="idx">03</span> projects</h2>
+      <div class="projects">
+
+        <div class="card">
+          <span class="tag">team of 3 · python / js</span>
+          <h3>Privacy-preserving ML with Federated Learning</h3>
+          <ul>
+            <li>Built an interactive application combining machine learning and federated
+                learning to process data securely without centralizing it.</li>
+            <li>Designed and implemented the solution using Python, JavaScript, HTML and
+                modern UI frameworks, while holding model accuracy steady.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="tag">CNN / ResNet50 · flask</span>
+          <h3>Animal Detection &amp; Classification</h3>
+          <ul>
+            <li>Built an animal detection system using a ResNet50 CNN, with transfer learning
+                to improve accuracy and cut compute cost.</li>
+            <li>Wrapped it in a Flask web interface for real-time image analysis at scale —
+                aimed at wildlife monitoring, research and security use cases.</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="skills">
+      <h2><span class="idx">04</span> skills</h2>
+      <div class="scan">
+        <div class="scan-row">
+          <span class="cat">cybersecurity</span>
+          <span class="items"><span>Network Security</span><span>Ethical Hacking</span><span>VAPT</span><span>Risk Analysis</span><span>DDoS Mitigation</span><span>Cloud Security</span></span>
+        </div>
+        <div class="scan-row">
+          <span class="cat">tools &amp; platforms</span>
+          <span class="items"><span>Kali Linux</span><span>Nmap</span><span>Wireshark</span><span>Burp Suite</span><span>Cisco Packet Tracer</span><span>RHEL</span></span>
+        </div>
+        <div class="scan-row">
+          <span class="cat">languages</span>
+          <span class="items"><span>Python</span><span>Java</span><span>C#</span><span>JavaScript</span><span>HTML</span></span>
+        </div>
+        <div class="scan-row">
+          <span class="cat">frameworks</span>
+          <span class="items"><span>Flask</span><span>MongoDB</span><span>SQL</span></span>
+        </div>
+        <div class="scan-row">
+          <span class="cat">currently learning</span>
+          <span class="items"><span>AWS / Cloud Computing</span><span>Debugging</span></span>
+        </div>
+      </div>
+    </section>
+
+    <section id="education">
+      <h2><span class="idx">05</span> education</h2>
+      <table class="edu">
+        <tr><th>Qualification</th><th>Institution</th><th>Year</th><th>Result</th></tr>
+        <tr>
+          <td class="qual">B.E., Information Technology</td>
+          <td>Muffakham Jah College of Engineering &amp; Technology, Osmania University, Hyderabad</td>
+          <td>2025</td>
+          <td>7.2 CGPA</td>
+        </tr>
+        <tr>
+          <td class="qual">Class XII</td>
+          <td>Page Junior College (State Board), Hyderabad</td>
+          <td>2021</td>
+          <td>78%</td>
+        </tr>
+        <tr>
+          <td class="qual">Class X</td>
+          <td>Vidyaranya High School (ICSE), Hyderabad</td>
+          <td>2019</td>
+          <td>79%</td>
+        </tr>
+      </table>
+    </section>
+
+    <section id="achievements">
+      <h2><span class="idx">06</span> achievements</h2>
+      <ul class="ach-list">
+        <li><span><strong>DDoS Mitigation research</strong> — contributed to a faculty-led research project applying machine learning to DDoS mitigation, under an Associate Professor.</span></li>
+        <li><span><strong>Orators' Club</strong> — active member for two consecutive years (2023–2024), building public speaking and communication skills.</span></li>
+        <li><span><strong>Volunteer Excellence Award</strong> — recognized by the Government of Telangana at Rotary Blood Bank, Hyderabad, for work recruiting and retaining voluntary blood donors.</span></li>
+        <li><span><strong>Shiamak Davar Dance Company</strong> — recognized for stage and ramp-walk performances.</span></li>
+      </ul>
+    </section>
+
+    <section id="volunteering">
+      <h2><span class="idx">—</span> volunteering</h2>
+      <ul class="ach-list">
+        <li><span>Supported faculty during lab sessions and helped coordinate college events.</span></li>
+        <li><span>Took part in technical festivals and cultural programs across campus.</span></li>
+        <li><span>Joined community service work, including blanket donation drives.</span></li>
+      </ul>
+    </section>
+
+    <footer id="contact">
+      <div>
+        <div>+91 81061 43069</div>
+        <div><a href="mailto:zain03.md@gmail.com">zain03.md@gmail.com</a></div>
+        <div class="langs">
+          <span>English</span><span>Urdu</span><span>Hindi</span><span>Telugu</span>
+        </div>
+      </div>
+      <div>Hyderabad, India</div>
+    </footer>
+
+  </main>
+</div>
+
+</body>
+</html>
